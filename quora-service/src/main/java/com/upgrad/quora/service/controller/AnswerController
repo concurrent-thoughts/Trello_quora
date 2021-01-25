@@ -1,0 +1,104 @@
+package com.upgrad.quora.service.controller;
+
+
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.upgrad.quora.service.exception.AnswerNotFoundException;
+import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
+
+@Controller
+public class AnswerController {
+	
+	@RequestMapping(value="/question/{questionId}/answer/create", method = RequestMethod.POST)	
+	public ResponseEntity createAnswer(@RequestHeader("accessToken") String accessToken,@PathVariable String questionId) throws InvalidQuestionException, AuthenticationFailedException, AuthorizationFailedException{
+		
+		if(!(accessToken.equals("dbToken"))) {
+			throw new InvalidQuestionException("QUES-001", "The question entered is invalid");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AuthenticationFailedException("ATHR-001", "User has not signed in");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to post an answer");
+		}else{
+			// save answer in db and send uuid			
+			Map<String,String> body = new HashMap<String,String>();
+				body.put("message", "ANSWER CREATED");
+			    body.put("uuid", UUID.randomUUID().toString());
+			
+			return new ResponseEntity(body, null, HttpStatus.OK);
+		}}
+
+	@RequestMapping(value="/answer/edit/{answerId}", method = RequestMethod.PUT)	
+	public ResponseEntity editAnswerContent(@RequestHeader("accessToken") String accessToken,@PathVariable String answerId) throws InvalidQuestionException, AuthenticationFailedException, AuthorizationFailedException, AnswerNotFoundException{
+		
+		
+		if(!(accessToken.equals("dbToken"))) {
+			throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AuthenticationFailedException("ATHR-002", "User is signed out.Sign in first to edit an answer");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AuthorizationFailedException("ATHR-003", "Only the answer owner can edit the answer");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AnswerNotFoundException("ANS-001", "Entered answer uuid does not exist");
+		}
+		else{
+			Map<String,String> body = new HashMap<String,String>();
+				body.put("message", "ANSWER EDITED");
+			    body.put("uuid", UUID.randomUUID().toString());
+			
+			return new ResponseEntity(body, null, HttpStatus.OK);
+		}}
+
+	@RequestMapping(value="/answer/delete/{answerId}", method = RequestMethod.DELETE)	
+	public ResponseEntity deleteAnswer(@RequestHeader("accessToken") String accessToken,@PathVariable String answerId) throws InvalidQuestionException, AuthenticationFailedException, AuthorizationFailedException, AnswerNotFoundException{
+		
+		
+		if(!(accessToken.equals("dbToken"))) {
+			throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AuthenticationFailedException("ATHR-002", "User is signed out.Sign in first to edit an answer");
+		}else if(!(accessToken.equals("AdminCredentailsDbToken"))) {
+			throw new AuthorizationFailedException("ATHR-003", "Only the answer owner can edit the answer");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AnswerNotFoundException("ANS-001", "Entered answer uuid does not exist");
+		}
+		else{
+			Map<String,String> body = new HashMap<String,String>();
+				body.put("message", "ANSWER DELETED");
+			    body.put("uuid", UUID.randomUUID().toString());
+			
+			return new ResponseEntity(body, null, HttpStatus.OK);
+		}}
+	
+	@RequestMapping(value="answer/all/{questionId}", method = RequestMethod.GET)	
+	public ResponseEntity getAllAnswersToQuestion(@RequestHeader("accessToken") String accessToken,@PathVariable String questionId) throws InvalidQuestionException, AuthenticationFailedException, AuthorizationFailedException, AnswerNotFoundException{
+		
+		
+		if(!(accessToken.equals("dbToken"))) {
+			throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AuthenticationFailedException("ATHR-002", "User is signed out.Sign in first to get the answer");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new InvalidQuestionException("QUES-001", "The question with entered uuid whose details are to be seen does not exist");
+		}else if(!(accessToken.equals("dbToken"))) {
+			throw new AnswerNotFoundException("ANS-001", "Entered answer uuid does not exist");
+		}
+		else{
+			Map<String,String> body = new HashMap<String,String>();
+				body.put("content", "of all the answers");
+			    body.put("uuid", UUID.randomUUID().toString());
+			
+			return new ResponseEntity(body, null, HttpStatus.OK);
+		}}}
